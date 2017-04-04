@@ -66,6 +66,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '../styles/theme';
+
 .day {
   display: flex;
   flex-direction: column;
@@ -75,9 +77,10 @@ export default {
   padding: 16px;
 
   &.enabled {
-    background-color: #efefef;
+    background-color: fade_out($brand-primary, 0.6);
+
     &:hover {
-      background-color: #ddd;
+      background-color: $brand-secondary;
     }
   }
 
@@ -87,11 +90,11 @@ export default {
 }
 
 .start {
-
+  font-weight: bold;
 }
 
 .end {
   font-size: 0.7em;
-  color: #aaa;
+  color: #4e4e4e;
 }
 </style>

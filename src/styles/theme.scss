@@ -1,7 +1,13 @@
 $theme: (
-  primary: rgb(251, 136, 72)
+  primary: rgb(251, 72, 115),
+  secondary: rgb(251, 163, 72),
+  text_on_primary: white
 );
 
 @mixin theme($property, $color) {
   #{$property}: map_get($theme, $color);
 }
+
+$brand-primary: map_get($theme, primary);
+$brand-secondary: map_get($theme, secondary);
+$brand-primary-text: map_get($theme, text_on_primary);

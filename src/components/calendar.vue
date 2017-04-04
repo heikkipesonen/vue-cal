@@ -1,33 +1,36 @@
 <template>
   <div class="calendar">
-    <div class="day-selector">
-      <div class="day" v-for="(day, index) in days">
-        <div class="day-content">
-          <span class="date">{{day.start.date()}}</span>
-          <span class="month">{{day.start.month() + 1}}</span>
-          <span class="year">{{day.start.year()}}</span>
+    <div class="content-wrapper">
+      <month v-model="date"></month>
+
+      <div class="day-selector">
+        <div class="day" v-for="(day, index) in days" :class="{active: day.active}">
+          <div class="day-content" v-on:click="selectDay(day.start)">
+            <span class="date">{{day.start.date()}}</span>
+            <span class="month">{{day.start.month() + 1}}</span>
+            <span class="year">{{day.start.year()}}</span>
+          </div>
+          <day v-model="days[index]"></day>
         </div>
-        <day v-model="days[index]"></day>
       </div>
     </div>
-
   </div>
 </template>
 <script>
 import moment from 'moment'
 import day from './day'
+import month from './month'
 
 export default {
   components: {
-    day
+    day,
+    month
   },
-
   props: {
     range: {
       type: Number,
-      default: 2
+      default: 5
     },
-
     timetable: {
       type: Array,
       default: () => [
@@ -70,7 +73,7 @@ export default {
 
   data () {
     return {
-      date: new Date()
+      date: moment()
     }
   },
 
@@ -88,7 +91,7 @@ export default {
     },
 
     days () {
-      let date = moment(this.date.valueOf()).startOf('day').toDate()
+      let date = moment(this.date).startOf('day')
       let day = 24 * 60 * 60 * 1000
       let loopDay = date.valueOf() - day * (this.range + 1)
       return Array(this.range * 2 + 1).fill(false).map((value, index) => {
@@ -100,7 +103,8 @@ export default {
         return {
           start: startTime,
           end: endTime,
-          enabled: timetable
+          enabled: timetable,
+          active: date.month() === startTime.month() && date.date() === startTime.date() && date.year() === startTime.year()
         }
       })
     }
@@ -108,42 +112,56 @@ export default {
 
   methods: {
     selectDay (day) {
+      this.date = moment(day)
       console.log(day)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+@import '../styles/theme';
+
 .calendar {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  display: flex;
-  flex-direction: column;
+}
+
+.content-wrapper {
+  position: relative;
 }
 
 .day-selector {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
 }
 
 .day {
-  flex: 1;
+  display: inline-block;
   text-align: center;
   min-height: 64px;
-  padding: 16px 0;
   max-width: 256px;
+  cursor: pointer;
+
+  .day-content {
+    padding: 16px 0;
+  }
+
+  &:hover {
+    background-color: fade_out($brand-secondary, 0.8)
+  }
+
+  &.active {
+    background-color: $brand-primary;
+  }
 }
 
 .date {
   font-size: 2em;
   display: block;
+  font-weight: 800;
 }
 
 .month, .year {
   font-size: 1em;
-  color: #aaa;
+  color: $brand-secondary;
 }
 </style>
